@@ -1,23 +1,26 @@
 
-from random import choice
-from constants import CELLSIZE
+from random import randint
+from constants import CELLSIZE, invert_side
+
+def random():
+    return randint(0, 2) < 1
 
 class Cell(object):
-    def __init__(self, index, batch=None):
-        self.batch = batch
-        self.randomize()
+    def __init__(self, matrix_index):
         self.walls = {}
-        self.pos = [i*CELLSIZE for i in index]
+        self.randomize()
+        self.matrix_index = matrix_index
+        self.pos = [i*CELLSIZE for i in self.matrix_index]
         while False not in [self.walls[i] for i in self.walls]:
             self.randomize()
         self.draw = []
         self.build_draw()
 
     def randomize(self):
-        self.walls['top'] = choice([True, False])
-        self.walls['left'] = choice([True, False])
-        self.walls['right'] = choice([True, False])
-        self.walls['bottom'] = choice([True, False])
+        self.walls['top'] = random()
+        self.walls['left'] = random()
+        self.walls['right'] = random()
+        self.walls['bottom'] = random()
 
     def build_draw(self):
         if self.walls['top']:
@@ -52,5 +55,8 @@ class Cell(object):
                 ]
             )
 
-    def check(self,side):
+    def check_leave(self, side):
         return not self.walls[side.lower()]
+
+    def check_enter(self, side):
+        return not self.walls[invert_side(side.lower())]
