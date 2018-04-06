@@ -6,7 +6,20 @@ import sys
 from threading import Thread
 
 import pygame
-from pygame.constants import QUIT, KEYUP, K_p, K_1, K_2, K_3, K_PLUS, K_MINUS, K_r, K_f
+from pygame.constants import (
+    QUIT,
+    KEYUP,
+    K_p,
+    K_1,
+    K_2,
+    K_3,
+    K_4,
+    K_PLUS,
+    K_MINUS,
+    K_r,
+    K_f,
+    K_SPACE
+)
 
 from batch import Batch
 from constants import FPS, WIDTH, HEIGHT, GREEN, WALLWIDTH, CELLSIZE, RED, BLUE
@@ -22,26 +35,27 @@ def sair():
     pygame.quit()
     exit()
 
+MAIN_BATCH = Batch()
 
 class Game(object):
     """ game class with all elements of the game"""
 
     def __init__(self):
+        self.pause = True
         self.fps = FPS
         self.show_player = True
-        self.main_batch = Batch()
-        self.grid = Grid(self.main_batch)
+        self.grid = Grid(MAIN_BATCH)
         self.display_surf = pygame.display.set_mode(
             (WIDTH, HEIGHT),
             pygame.HWSURFACE  # |pygame.DOUBLEBUF
         )
-        self.players = [Player((0, 0), batch=self.main_batch)]
+        self.players = [Player((0, 0), batch=MAIN_BATCH)]
         for i in range(1, HEIGHT/CELLSIZE):
             self.players.append(
                 Player(
                     (0, i),
                     global_path=self.players[0].global_path,
-                    batch=self.main_batch
+                    batch=MAIN_BATCH
                 )
             )
         self.player_done = None
@@ -50,14 +64,14 @@ class Game(object):
 
     def restart(self):
         pygame.display.set_caption('Carregando labirinto')
-        self.grid = Grid(self.main_batch)
-        self.players = [Player((0, 0), batch=self.main_batch)]
+        self.grid = Grid(MAIN_BATCH)
+        self.players = [Player((0, 0), batch=MAIN_BATCH)]
         for i in range(1, HEIGHT/CELLSIZE):
             self.players.append(
                 Player(
                     (0, i),
                     global_path=self.players[0].global_path,
-                    batch=self.main_batch
+                    batch=MAIN_BATCH
                 )
             )
         self.player_done = None
@@ -93,7 +107,7 @@ class Game(object):
                 for i in self.players:
                     i.draw(self.display_surf)
             else:
-                self.main_batch.add_to_batch(
+                MAIN_BATCH.add_to_batch(
                     pygame.draw.lines(
                         self.display_surf,
                         GREEN,
@@ -103,38 +117,33 @@ class Game(object):
                     )
                 )
         if self.player_done:
-            self.main_batch.add_to_batch([
+            MAIN_BATCH.add_to_batch([
                 self.display_surf.fill(
                     RED,
                     pygame.Rect(
                         self.grid.get_cell(
-                            self.player_done.path[0]).pos[0]+int(CELLSIZE*0.1),
+                            self.player_done.path[0]).pos[0],
                         self.grid.get_cell(
-                            self.player_done.path[0]).pos[1]+int(CELLSIZE*0.1),
-                        int(CELLSIZE*0.8),
-                        int(CELLSIZE*0.8)
+                            self.player_done.path[0]).pos[1],
+                        CELLSIZE,
+                        CELLSIZE
                     )
                 ),
                 self.display_surf.fill(
                     BLUE,
                     pygame.Rect(
                         self.grid.get_cell(
-                            self.player_done.path[-1]).pos[0]+int(CELLSIZE*0.1),
+                            self.player_done.path[-1]).pos[0],
                         self.grid.get_cell(
-                            self.player_done.path[-1]).pos[1]+int(CELLSIZE*0.1),
-                        int(CELLSIZE*0.8),
-                        int(CELLSIZE*0.8)
+                            self.player_done.path[-1]).pos[1],
+                        CELLSIZE,
+                        CELLSIZE
                     )
                 )
             ])
 
     def main_loop(self):
         while True:
-            if not self.player_done:
-                self.update()
-                self.check()
-            elif not self.do_once:
-                pygame.display.set_caption('Done!')
             for event in pygame.event.get():
                 if event.type == QUIT:
                     sair()
@@ -148,6 +157,8 @@ class Game(object):
                     elif event.key == K_2:
                         self.fps = 15
                     elif event.key == K_3:
+                        self.fps = 30
+                    elif event.key == K_4:
                         self.fps = 60
                     elif event.key == K_r:
                         self.restart()
@@ -161,8 +172,16 @@ class Game(object):
                             self.fps += 5
                         if self.fps > 60:
                             self.fps = 60
-            self.draw()
-            pygame.display.update(self.main_batch.draw())
+                    elif event.key == K_SPACE:
+                        self.pause = not self.pause
+            if not self.pause:
+                if not self.player_done:
+                    self.update()
+                    self.check()
+                elif not self.do_once:
+                    pygame.display.set_caption('Done!')
+                self.draw()
+                pygame.display.update(MAIN_BATCH.draw())
             print CLOCK.get_fps()
             CLOCK.tick(self.fps)
 

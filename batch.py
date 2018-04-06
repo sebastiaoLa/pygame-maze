@@ -3,7 +3,7 @@ class Batch(object):
         self.rects = []
 
     def add_to_batch(self, rect):
-        if isinstance(rect,list):
+        if isinstance(rect, list):
             self.rects += rect
         else:
             self.rects.append(rect)

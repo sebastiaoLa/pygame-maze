@@ -1,4 +1,4 @@
-
+from random import random
 FULLSCREEN = True
 
 if FULLSCREEN:
@@ -25,8 +25,8 @@ PINK = (248, 24, 148)
 
 FPS = 60
 
-WALLWIDTH = 4
-CELLSIZE = 20
+WALLWIDTH = 2
+CELLSIZE = 10
 
 
 def invert_side(side):
@@ -39,3 +39,7 @@ def invert_side(side):
     elif side == 'bottom':
         return 'top'
     return None
+
+
+def cell_random():
+    return random() < 0.3

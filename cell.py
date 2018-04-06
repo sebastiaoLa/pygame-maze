@@ -1,9 +1,6 @@
 
-from random import randint
-from constants import CELLSIZE, invert_side
+from constants import CELLSIZE, invert_side, cell_random
 
-def random():
-    return randint(0, 2) < 1
 
 class Cell(object):
     def __init__(self, matrix_index):
@@ -17,10 +14,10 @@ class Cell(object):
         self.build_draw()
 
     def randomize(self):
-        self.walls['top'] = random()
-        self.walls['left'] = random()
-        self.walls['right'] = random()
-        self.walls['bottom'] = random()
+        self.walls['top'] = cell_random()
+        self.walls['left'] = cell_random()
+        self.walls['right'] = cell_random()
+        self.walls['bottom'] = cell_random()
 
     def build_draw(self):
         if self.walls['top']:

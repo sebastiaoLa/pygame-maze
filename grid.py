@@ -1,9 +1,9 @@
 
-from pygame import draw, Rect, HWSURFACE
+from pygame import draw, HWSURFACE
 from pygame.surface import Surface
 
 from cell import Cell
-from constants import HEIGHT, WALLWIDTH, WHITE, WIDTH, RED, BLUE, CELLSIZE
+from constants import HEIGHT, WALLWIDTH, WHITE, WIDTH, CELLSIZE
 
 POS_DICT = {
     'top': [0, -1],
@@ -63,7 +63,6 @@ class Grid(object):
         rect.center = (WIDTH/2, HEIGHT/2)
         if self.batch:
             self.batch.add_to_batch(disp.blit(self.surface, rect))
-            # self.batch.add_to_batch(disp.fill((0,0,0)))
         else:
             disp.blit(self.surface, rect)
 

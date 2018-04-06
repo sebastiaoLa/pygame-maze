@@ -1,7 +1,6 @@
 
 from pygame import draw
-from random import randint
-from constants import CELLSIZE, WHITE, WIDTH, HEIGHT
+from constants import CELLSIZE, WIDTH, RED
 
 
 class Player(object):
@@ -29,7 +28,8 @@ class Player(object):
         return None
 
     def done(self):
-        return self.pos[0] == (WIDTH/CELLSIZE)-1 #and self.pos[1] == (HEIGHT/CELLSIZE)-1
+        # and self.pos[1] == (HEIGHT/CELLSIZE)-1
+        return self.pos[0] == (WIDTH/CELLSIZE)-1
 
     def move(self, cell, cells):
         if not self.done():
@@ -42,8 +42,7 @@ class Player(object):
                             if child:
                                 children.append(child)
             return children
-        else:
-            return [self]
+        return [self]
 
     def draw_path(self):
         points = []
@@ -52,9 +51,17 @@ class Player(object):
         return points
 
     def get_color(self):
-        red = (1-float(self.pos[0])/((WIDTH/CELLSIZE)-1))*255
-        blue = (float(self.pos[0])/((WIDTH/CELLSIZE)-1))*255
-        return (red,0,blue)
+        # red = ((1-float(self.pos[0])/((WIDTH/CELLSIZE)-1))*(255-127))+127
+        # blue = (float(self.pos[0])/((WIDTH/CELLSIZE)-1))*255
+        # green = 0
+        # red = 255-len(self.path) if 255-len(self.path)<255 and 255-len(self.path)>255 else 0
+        # green = len(self.path)-255 if len(self.path)-255<255 and len(self.path)-255>0 else 0
+        # blue = len(self.path) if len(self.path)<255 and len(self.path)>0 else 255
+        # if (red,green,blue) == (0,0,0):
+        #     return (255,255,255)
+        # print (red,green,blue)
+        # return (red,green,blue)
+        return RED
 
     def draw(self, disp):
         if self.batch:
@@ -63,7 +70,7 @@ class Player(object):
                     disp,
                     self.get_color(),
                     [(x*CELLSIZE)+(CELLSIZE/2) for x in self.pos],
-                    CELLSIZE/4
+                    CELLSIZE/3
                 )
             )
         else:
@@ -71,5 +78,5 @@ class Player(object):
                 disp,
                 self.get_color(),
                 [(x*CELLSIZE)+(CELLSIZE/2) for x in self.pos],
-                CELLSIZE/6
+                CELLSIZE/3
             )
