@@ -1,6 +1,6 @@
 
 from pygame import draw
-from constants import CELLSIZE, WIDTH, RED
+from constants import CELLSIZE, WIDTH, RED, DESTINY
 
 
 class Player(object):
@@ -28,8 +28,10 @@ class Player(object):
         return None
 
     def done(self):
-        # and self.pos[1] == (HEIGHT/CELLSIZE)-1
-        return self.pos[0] == (WIDTH/CELLSIZE)-1
+        return True in [self.pos[0] == i[0] and self.pos[1] == i[1] for i in DESTINY]
+
+    def distance_to_destiny(self):
+        return min([i[0]-self.pos[0]+i[1]-self.pos[1] for i in DESTINY])
 
     def move(self, cell, cells):
         if not self.done():
@@ -47,6 +49,12 @@ class Player(object):
     def draw_path(self):
         points = []
         for i in self.path:
+            points.append([(x*CELLSIZE)+(CELLSIZE/2) for x in i])
+        return points
+
+    def draw_global_path(self):
+        points = []
+        for i in self.global_path:
             points.append([(x*CELLSIZE)+(CELLSIZE/2) for x in i])
         return points
 

@@ -1,5 +1,7 @@
-from random import random
+
+from math import log10
 FULLSCREEN = True
+START_PAUSED = False
 
 if FULLSCREEN:
     import pygame
@@ -16,6 +18,7 @@ else:
 #	COLORS
 RED = (255, 000, 000)
 GREEN = (000, 255, 000)
+GREEN_ALPHA = (000, 255, 000,25.5)
 BLUE = (000, 000, 255)
 WHITE = (255, 255, 255)
 BLACK = (000, 000, 000)
@@ -25,21 +28,19 @@ PINK = (248, 24, 148)
 
 FPS = 60
 
-WALLWIDTH = 2
-CELLSIZE = 10
+WALLWIDTH = 1
+CELLSIZE = 5
+
+COMPLEXITY_LEVEL = 1/log10((WIDTH/CELLSIZE)*(HEIGHT/CELLSIZE))
+print 'complexity',COMPLEXITY_LEVEL
 
 
-def invert_side(side):
-    if side == 'top':
-        return 'bottom'
-    elif side == 'right':
-        return 'left'
-    elif side == 'left':
-        return 'right'
-    elif side == 'bottom':
-        return 'top'
-    return None
+# FROM = [
+#     (0, y) for y in range(0, (HEIGHT/CELLSIZE)-1)
+# ]+[
+#     (x, 0) for x in (range(0, (HEIGHT/CELLSIZE)-1) if WIDTH > HEIGHT else range(0, (WIDTH/CELLSIZE)-1))
+# ]
+FROM = [(0,0)]
 
-
-def cell_random():
-    return random() < 0.3
+DESTINY = [((WIDTH/CELLSIZE)-1, (HEIGHT/CELLSIZE)-1)]
+# DESTINY = [((WIDTH/CELLSIZE)-1, y) for y in range(0, (HEIGHT/CELLSIZE)-1)]

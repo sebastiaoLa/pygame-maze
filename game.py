@@ -3,7 +3,7 @@ mini game de um labirinto para posterior desenvolvimento de algoritimos genetico
 algoritmos pathfind
 """
 import sys
-from threading import Thread
+from time import time
 
 import pygame
 from pygame.constants import (
@@ -18,11 +18,12 @@ from pygame.constants import (
     K_MINUS,
     K_r,
     K_f,
-    K_SPACE
+    K_SPACE,
+    K_5
 )
 
 from batch import Batch
-from constants import FPS, WIDTH, HEIGHT, GREEN, WALLWIDTH, CELLSIZE, RED, BLUE
+from constants import FPS, WIDTH, HEIGHT, GREEN, WALLWIDTH, CELLSIZE, RED, BLUE, START_PAUSED, FROM, GREEN_ALPHA
 from grid import Grid
 from player import Player
 
@@ -35,41 +36,36 @@ def sair():
     pygame.quit()
     exit()
 
+
 MAIN_BATCH = Batch()
+
 
 class Game(object):
     """ game class with all elements of the game"""
 
     def __init__(self):
-        self.pause = True
+        self.pause = START_PAUSED
         self.fps = FPS
         self.show_player = True
-        self.grid = Grid(MAIN_BATCH)
+        self.player_done = None
+        self.players = []
         self.display_surf = pygame.display.set_mode(
             (WIDTH, HEIGHT),
-            pygame.HWSURFACE  # |pygame.DOUBLEBUF
+            pygame.HWSURFACE | pygame.SRCALPHA  # |pygame.DOUBLEBUF
         )
-        self.players = [Player((0, 0), batch=MAIN_BATCH)]
-        for i in range(1, HEIGHT/CELLSIZE):
-            self.players.append(
-                Player(
-                    (0, i),
-                    global_path=self.players[0].global_path,
-                    batch=MAIN_BATCH
-                )
-            )
-        self.player_done = None
-        self.do_once = False
-        pygame.display.set_caption('Carregando labirinto')
+        self.attempt = 0
+        self.restart()
 
     def restart(self):
+        self.attempt += 1
+        # print self.attempt
         pygame.display.set_caption('Carregando labirinto')
         self.grid = Grid(MAIN_BATCH)
         self.players = [Player((0, 0), batch=MAIN_BATCH)]
-        for i in range(1, HEIGHT/CELLSIZE):
+        for i in FROM[1:]:
             self.players.append(
                 Player(
-                    (0, i),
+                    i,
                     global_path=self.players[0].global_path,
                     batch=MAIN_BATCH
                 )
@@ -81,6 +77,7 @@ class Game(object):
         self.player_done = self.get_done()
 
     def update(self):
+        millis = time()
         children = []
         for i in self.players:
             children += i.move(
@@ -88,8 +85,10 @@ class Game(object):
                 self.grid.get_adjacent_cells(i.pos)
             )
         self.players = children
+
         if not self.players:
             self.restart()
+        # print 'took',(time()-millis)*self.fps,'fps'
 
     def get_done(self):
         if self.player_done:
@@ -106,6 +105,16 @@ class Game(object):
             if not self.player_done:
                 for i in self.players:
                     i.draw(self.display_surf)
+                    # if len(i.path) > 1:
+                    #     MAIN_BATCH.add_to_batch(
+                    #         pygame.draw.lines(
+                    #             self.display_surf,
+                    #             GREEN_ALPHA,
+                    #             False,
+                    #             i.draw_path(),
+                    #             WALLWIDTH
+                    #         )
+                    #     )
             else:
                 MAIN_BATCH.add_to_batch(
                     pygame.draw.lines(
@@ -144,6 +153,8 @@ class Game(object):
 
     def main_loop(self):
         while True:
+            if self.player_done:
+                sair()
             for event in pygame.event.get():
                 if event.type == QUIT:
                     sair()
@@ -160,6 +171,8 @@ class Game(object):
                         self.fps = 30
                     elif event.key == K_4:
                         self.fps = 60
+                    elif event.key == K_5:
+                        self.fps = 0
                     elif event.key == K_r:
                         self.restart()
                     elif event.key == K_MINUS:
@@ -182,7 +195,7 @@ class Game(object):
                     pygame.display.set_caption('Done!')
                 self.draw()
                 pygame.display.update(MAIN_BATCH.draw())
-            print CLOCK.get_fps()
+            # print "%.2f" % CLOCK.get_fps()
             CLOCK.tick(self.fps)
 
 

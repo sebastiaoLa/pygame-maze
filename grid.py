@@ -1,5 +1,5 @@
 
-from pygame import draw, HWSURFACE
+from pygame import draw, HWSURFACE, Rect
 from pygame.surface import Surface
 
 from cell import Cell
@@ -30,6 +30,7 @@ class Grid(object):
 
     def build(self, disp):
         self.surface = Surface((WIDTH, HEIGHT), HWSURFACE)
+        draw.rect(self.surface, WHITE, Rect(0, 0, WIDTH-WALLWIDTH, HEIGHT-WALLWIDTH), WALLWIDTH)
         for line in self.cells:
             for cell in line:
                 for wall in cell.draw:
@@ -63,6 +64,7 @@ class Grid(object):
         rect.center = (WIDTH/2, HEIGHT/2)
         if self.batch:
             self.batch.add_to_batch(disp.blit(self.surface, rect))
+            # self.batch.add_to_batch(disp.fill((0,0,0)))
         else:
             disp.blit(self.surface, rect)
 
