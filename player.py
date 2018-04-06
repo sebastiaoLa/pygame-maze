@@ -12,18 +12,21 @@ class Player(object):
         self.path.append(self.pos)
         self.batch = batch
 
+    def pos_not_in_path(self,pos):
+        return pos not in self.global_path[len(self.global_path)-200:]
+
     def get_child(self, side):
         if side == 'top':
-            if (self.pos[0], self.pos[1]-1) not in self.global_path:
+            if self.pos_not_in_path((self.pos[0], self.pos[1]-1)):
                 return Player((self.pos[0], self.pos[1]-1), self.global_path, self.path, self.batch)
         elif side == 'left':
-            if (self.pos[0]-1, self.pos[1]) not in self.global_path:
+            if self.pos_not_in_path((self.pos[0]-1, self.pos[1])):
                 return Player((self.pos[0]-1, self.pos[1]), self.global_path, self.path, self.batch)
         elif side == 'right':
-            if (self.pos[0]+1, self.pos[1]) not in self.global_path:
+            if self.pos_not_in_path((self.pos[0]+1, self.pos[1])):
                 return Player((self.pos[0]+1, self.pos[1]), self.global_path, self.path, self.batch)
         elif side == 'bottom':
-            if (self.pos[0], self.pos[1]+1) not in self.global_path:
+            if self.pos_not_in_path((self.pos[0], self.pos[1]+1)):
                 return Player((self.pos[0], self.pos[1]+1), self.global_path, self.path, self.batch)
         return None
 

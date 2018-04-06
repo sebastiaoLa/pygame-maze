@@ -87,7 +87,9 @@ class Game(object):
         self.players = children
 
         if not self.players:
+            sair()
             self.restart()
+            
         # print 'took',(time()-millis)*self.fps,'fps'
 
     def get_done(self):
