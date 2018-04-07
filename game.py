@@ -85,9 +85,7 @@ class Game(object):
                 self.grid.get_adjacent_cells(i.pos)
             )
         self.players = children
-
         if not self.players:
-            sair()
             self.restart()
             
         # print 'took',(time()-millis)*self.fps,'fps'
@@ -107,16 +105,17 @@ class Game(object):
             if not self.player_done:
                 for i in self.players:
                     i.draw(self.display_surf)
-                    # if len(i.path) > 1:
-                    #     MAIN_BATCH.add_to_batch(
-                    #         pygame.draw.lines(
-                    #             self.display_surf,
-                    #             GREEN_ALPHA,
-                    #             False,
-                    #             i.draw_path(),
-                    #             WALLWIDTH
-                    #         )
-                    #     )
+                    if len(self.players)<50:
+                        if len(i.path) > 1:
+                            MAIN_BATCH.add_to_batch(
+                                pygame.draw.lines(
+                                    self.display_surf,
+                                    GREEN,
+                                    False,
+                                    i.draw_path(),
+                                    WALLWIDTH
+                                )
+                            )
             else:
                 MAIN_BATCH.add_to_batch(
                     pygame.draw.lines(
@@ -155,8 +154,6 @@ class Game(object):
 
     def main_loop(self):
         while True:
-            if self.player_done:
-                sair()
             for event in pygame.event.get():
                 if event.type == QUIT:
                     sair()

@@ -1,6 +1,6 @@
 
 from pygame import draw
-from constants import CELLSIZE, WIDTH, RED, DESTINY
+from constants import CELLSIZE, WIDTH, RED, DESTINY, COMPLEXITY_LEVEL
 
 
 class Player(object):
@@ -11,24 +11,37 @@ class Player(object):
         self.path = list(path) if path else []
         self.path.append(self.pos)
         self.batch = batch
+        self.children = []
 
-    def pos_not_in_path(self,pos):
-        return pos not in self.global_path[len(self.global_path)-200:]
+    def pos_in_path(self, pos):
+        for i in xrange(1, int(len(self.global_path)*COMPLEXITY_LEVEL)):
+            if pos == self.global_path[(i*-1)]:
+                return True
+        return False
+
+        # for i in self.global_path[int(len(self.global_path)*(COMPLEXITY_LEVEL*0.5))*-1:][::-1]:
+        #     if pos == i:
+        #         return True
+        # return False
+        # return pos in self.global_path[int(len(self.global_path)*(COMPLEXITY_LEVEL*0.5))*-1:]
 
     def get_child(self, side):
         if side == 'top':
-            if self.pos_not_in_path((self.pos[0], self.pos[1]-1)):
-                return Player((self.pos[0], self.pos[1]-1), self.global_path, self.path, self.batch)
+            if not self.pos_in_path((self.pos[0], self.pos[1]-1)):
+                self.children.append(
+                    Player((self.pos[0], self.pos[1]-1), self.global_path, self.path, self.batch))
         elif side == 'left':
-            if self.pos_not_in_path((self.pos[0]-1, self.pos[1])):
-                return Player((self.pos[0]-1, self.pos[1]), self.global_path, self.path, self.batch)
+            if not self.pos_in_path((self.pos[0]-1, self.pos[1])):
+                self.children.append(
+                    Player((self.pos[0]-1, self.pos[1]), self.global_path, self.path, self.batch))
         elif side == 'right':
-            if self.pos_not_in_path((self.pos[0]+1, self.pos[1])):
-                return Player((self.pos[0]+1, self.pos[1]), self.global_path, self.path, self.batch)
+            if not self.pos_in_path((self.pos[0]+1, self.pos[1])):
+                self.children.append(
+                    Player((self.pos[0]+1, self.pos[1]), self.global_path, self.path, self.batch))
         elif side == 'bottom':
-            if self.pos_not_in_path((self.pos[0], self.pos[1]+1)):
-                return Player((self.pos[0], self.pos[1]+1), self.global_path, self.path, self.batch)
-        return None
+            if not self.pos_in_path((self.pos[0], self.pos[1]+1)):
+                self.children.append(
+                    Player((self.pos[0], self.pos[1]+1), self.global_path, self.path, self.batch))
 
     def done(self):
         return True in [self.pos[0] == i[0] and self.pos[1] == i[1] for i in DESTINY]
@@ -37,16 +50,14 @@ class Player(object):
         return min([i[0]-self.pos[0]+i[1]-self.pos[1] for i in DESTINY])
 
     def move(self, cell, cells):
+        threads = []
         if not self.done():
-            children = []
             for i in ['top', 'left', 'right', 'bottom']:
                 if cell.check_leave(i):
                     if cells[i]:
                         if cells[i].check_enter(i):
-                            child = self.get_child(i)
-                            if child:
-                                children.append(child)
-            return children
+                            self.get_child(i)
+            return self.children
         return [self]
 
     def draw_path(self):
