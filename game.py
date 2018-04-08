@@ -19,7 +19,8 @@ from pygame.constants import (
     K_r,
     K_f,
     K_SPACE,
-    K_5
+    K_5,
+    K_h
 )
 
 from batch import Batch
@@ -45,6 +46,7 @@ class Game(object):
 
     def __init__(self):
         self.pause = START_PAUSED
+        self.show_path = True
         self.fps = FPS
         self.show_player = True
         self.player_done = None
@@ -61,7 +63,8 @@ class Game(object):
         # print self.attempt
         pygame.display.set_caption('Carregando labirinto')
         self.grid = Grid(MAIN_BATCH)
-        self.players = [Player((0, 0), batch=MAIN_BATCH)]
+        self.players = [
+            Player((0, 0), batch=MAIN_BATCH)]
         for i in FROM[1:]:
             self.players.append(
                 Player(
@@ -87,7 +90,7 @@ class Game(object):
         self.players = children
         if not self.players:
             self.restart()
-            
+
         # print 'took',(time()-millis)*self.fps,'fps'
 
     def get_done(self):
@@ -105,7 +108,7 @@ class Game(object):
             if not self.player_done:
                 for i in self.players:
                     i.draw(self.display_surf)
-                    if len(self.players)<50:
+                    if self.show_path:
                         if len(i.path) > 1:
                             MAIN_BATCH.add_to_batch(
                                 pygame.draw.lines(
@@ -186,6 +189,8 @@ class Game(object):
                             self.fps = 60
                     elif event.key == K_SPACE:
                         self.pause = not self.pause
+                    elif event.key == K_h:
+                        self.show_path = not self.show_path
             if not self.pause:
                 if not self.player_done:
                     self.update()
