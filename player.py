@@ -6,18 +6,20 @@ from constants import CELLSIZE, WIDTH, RED, DESTINY, COMPLEXITY_LEVEL
 class Player(object):
     def __init__(self, pos, global_path=None, path=None, batch=None):
         self.pos = pos
-        self.global_path = global_path if global_path else []
-        self.global_path.append(self.pos)
+        self.global_path = global_path if global_path else set()
+        self.global_path.add(self.pos)
         self.path = list(path) if path else []
         self.path.append(self.pos)
         self.batch = batch
         self.children = []
 
     def pos_in_path(self, pos):
-        for i in xrange(1, int(len(self.global_path)*COMPLEXITY_LEVEL)):
-            if pos == self.global_path[(i*-1)]:
-                return True
-        return False
+        return pos in self.global_path
+
+        # for i in xrange(1, int(len(self.global_path)*COMPLEXITY_LEVEL)):
+        #     if pos == self.global_path[(i*-1)]:
+        #         return True
+        # return False
 
         # for i in self.global_path[int(len(self.global_path)*(COMPLEXITY_LEVEL*0.5))*-1:][::-1]:
         #     if pos == i:
