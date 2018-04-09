@@ -19,11 +19,12 @@ from pygame.constants import (
     K_r,
     K_f,
     K_SPACE,
-    K_5
+    K_5,
+    K_h
 )
 
 from batch import Batch
-from constants import FPS, WIDTH, HEIGHT, GREEN, WALLWIDTH, CELLSIZE, RED, BLUE, START_PAUSED, FROM, GREEN_ALPHA
+from constants import FPS, WIDTH, HEIGHT, GREEN, WALLWIDTH, CELLSIZE, RED, BLUE, START_PAUSED, FROM
 from grid import Grid
 from player import Player
 
@@ -47,6 +48,7 @@ class Game(object):
         self.pause = START_PAUSED
         self.fps = FPS
         self.show_player = True
+        self.show_path = False
         self.player_done = None
         self.players = []
         self.display_surf = pygame.display.set_mode(
@@ -81,14 +83,11 @@ class Game(object):
         children = []
         for i in self.players:
             children += i.move(
-                self.grid.get_cell(i.pos),
-                self.grid.get_adjacent_cells(i.pos)
+                self.grid.get_accessible_cells(i.pos)
             )
         self.players = children
         if not self.players:
             self.restart()
-            
-        # print 'took',(time()-millis)*self.fps,'fps'
 
     def get_done(self):
         if self.player_done:
@@ -105,7 +104,7 @@ class Game(object):
             if not self.player_done:
                 for i in self.players:
                     i.draw(self.display_surf)
-                    if len(self.players)<50:
+                    if self.show_path:
                         if len(i.path) > 1:
                             MAIN_BATCH.add_to_batch(
                                 pygame.draw.lines(
@@ -186,6 +185,8 @@ class Game(object):
                             self.fps = 60
                     elif event.key == K_SPACE:
                         self.pause = not self.pause
+                    elif event.key == K_h:
+                        self.show_path = not self.show_path
             if not self.pause:
                 if not self.player_done:
                     self.update()

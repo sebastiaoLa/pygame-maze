@@ -2,6 +2,7 @@
 from constants import CELLSIZE, COMPLEXITY_LEVEL
 from random import random
 
+
 def invert_side(side):
     if side == 'top':
         return 'bottom'
@@ -13,8 +14,10 @@ def invert_side(side):
         return 'top'
     return None
 
+
 def cell_random():
     return random() < COMPLEXITY_LEVEL
+
 
 class Cell(object):
     def __init__(self, matrix_index):

@@ -46,21 +46,12 @@ class Player(object):
                     Player((self.pos[0], self.pos[1]+1), self.global_path, self.path, self.batch))
 
     def done(self):
-        return True in [self.pos[0] == i[0] and self.pos[1] == i[1] for i in DESTINY]
+        return self.pos in DESTINY
 
-    def distance_to_destiny(self):
-        return min([i[0]-self.pos[0]+i[1]-self.pos[1] for i in DESTINY])
-
-    def move(self, cell, cells):
-        threads = []
-        if not self.done():
-            for i in ['top', 'left', 'right', 'bottom']:
-                if cell.check_leave(i):
-                    if cells[i]:
-                        if cells[i].check_enter(i):
-                            self.get_child(i)
-            return self.children
-        return [self]
+    def move(self, cells):
+        for i in cells:
+            self.get_child(i)
+        return self.children
 
     def draw_path(self):
         points = []
