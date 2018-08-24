@@ -84,14 +84,14 @@ class Player(object):
                 draw.circle(
                     disp,
                     self.get_color(),
-                    [(x*CELLSIZE)+(CELLSIZE/2) for x in self.pos],
-                    CELLSIZE/3
+                    [int((x*CELLSIZE)+(CELLSIZE/2)) for x in self.pos],
+                    int(CELLSIZE/3)
                 )
             )
         else:
             draw.circle(
                 disp,
                 self.get_color(),
-                [(x*CELLSIZE)+(CELLSIZE/2) for x in self.pos],
-                CELLSIZE/3
+                [int((x*CELLSIZE)+(CELLSIZE/2)) for x in self.pos],
+                int(CELLSIZE/3)
             )

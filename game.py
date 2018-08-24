@@ -45,6 +45,7 @@ class Game(object):
     """ game class with all elements of the game"""
 
     def __init__(self):
+        self.milis = 0
         self.pause = START_PAUSED
         self.fps = FPS
         self.show_player = True
@@ -195,7 +196,10 @@ class Game(object):
                     pygame.display.set_caption('Done!')
                 self.draw()
                 pygame.display.update(MAIN_BATCH.draw())
-            # print "%.2f" % CLOCK.get_fps()
+            self.milis += CLOCK.get_time()
+            if self.milis>500:
+                print (len(self.players), len(self.players[0].global_path))
+                self.milis = self.milis - 1000
             CLOCK.tick(self.fps)
 
 

@@ -28,13 +28,13 @@ PINK = (248, 24, 148)
 FPS = 60
 
 WALLWIDTH = 1
-CELLSIZE = 10
+CELLSIZE = 2
 
 COMPLEXITY_LEVEL = 1/log10((WIDTH/CELLSIZE)*(HEIGHT/CELLSIZE))
 COMPLEXITY_LEVEL = COMPLEXITY_LEVEL if COMPLEXITY_LEVEL > 0.25 and COMPLEXITY_LEVEL < 0.35 else (
     COMPLEXITY_LEVEL*1.1 if COMPLEXITY_LEVEL < 0.25 else 0.35)
 
-print 'complexity', COMPLEXITY_LEVEL
+print(('complexity', COMPLEXITY_LEVEL))
 
 # FROM = [
 #     (0, y) for y in range(0, (HEIGHT/CELLSIZE)-1)
@@ -49,9 +49,9 @@ DESTINY = [((WIDTH/CELLSIZE)-1, (HEIGHT/CELLSIZE)-1)]
 #            for y in range(0, (HEIGHT/CELLSIZE)/2)]
 
 DESTINY = set(DESTINY)
-print DESTINY
+print(DESTINY)
 
 GRID_SET = set()
-for x in range(0, WIDTH/CELLSIZE):
-    for y in range(0, HEIGHT/CELLSIZE):
+for x in range(0, int(WIDTH/CELLSIZE)):
+    for y in range(0, int(HEIGHT/CELLSIZE)):
         GRID_SET.add((x, y))
